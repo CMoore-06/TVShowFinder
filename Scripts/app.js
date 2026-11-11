@@ -1,6 +1,7 @@
 //Declare Variables
 const select = document.getElementById("show-select");
 const detailsSection = document.getElementById("show-details");
+const message = document.getElementById("messages");
 
 //Add Event Listeners + Call Functions
 getShows();
@@ -10,18 +11,27 @@ select.onchange = () => {
         return;
     }
     else {
+        message.textContent = "";
         loadDetails(id);
     }
 }
 
 //Functions
 async function getShows() {
+    message.textContent = "Loading shows..."
+
     const url = "https://api.tvmaze.com/shows?page=0";
     try {
         const result = await fetch(url);
 
         if(!result.ok) {
-            throw new Error(`Request failed. Status: ${result.status}`);
+            if(result.status === 404)
+            {
+                message.textContent = `Error 404. The requested show could not be found.`
+            }
+            else {
+                message.textContent = `Loading details failed. Status ${result.status}`;
+            }
         }
 
         const Shows = await result.json();
@@ -44,15 +54,24 @@ function fillDropdown(shows) {
 
         select.append(option);
     }
+    message.textContent = "";
 }
 
 async function loadDetails(id) {
+    message.textContent = "Loading show details...";
+
     let newUrl = `https://api.tvmaze.com/shows/${id}`
 
     try {
         let result2 = await fetch(newUrl);
         if(!result2.ok) {
-            console.log(`Loading details failed. Call status: ${result2.status}`);
+            if(result2.status === 404)
+            {
+                message.textContent = `Error 404. The requested show could not be found.`
+            }
+            else {
+                message.textContent = `Loading details failed. Status ${result2.status}`;
+            }
         }
 
         else {
@@ -62,7 +81,7 @@ async function loadDetails(id) {
     }
 
     catch(error) {
-        console.log(error);
+        message.textContent = error;
     }
 }
 
@@ -72,12 +91,12 @@ function showDetails(result) {
     let h2 = document.createElement("h2");
     h2.textContent = result.name ?? "Unknown.";
 
+    let poster = document.createElement("img");
     if(!result.image) {
         document.createElement("p").textContent = "No image provided.";
     }
 
     else {
-        let poster = document.createElement("img");
         poster.src = result.image?.original ?? "";
         poster.alt = `The poster image for ${result.name}`;
     }
@@ -104,4 +123,6 @@ function showDetails(result) {
     detailsSection.append(premiereDate);
     detailsSection.append(status);
     detailsSection.append(rating);
+
+    message.textContent = "";
 }

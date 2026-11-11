@@ -46,8 +46,6 @@ async function getShows() {
 }
 
 function fillDropdown(shows) {
-    select.replaceChildren();
-
     for(let i = 0; i < shows.length; i++) {
         let option = document.createElement("option");
         option.textContent = shows[i].name;

@@ -1,6 +1,7 @@
 //Declare Variables
 const select = document.getElementById("show-select");
 const detailsSection = document.getElementById("show-details");
+const textSection = document.getElementById("text");
 const message = document.getElementById("messages");
 
 //Add Event Listeners + Call Functions
@@ -108,21 +109,23 @@ function showDetails(result) {
     summary.innerHTML = result.summary ?? "No summary provided.";
 
     let premiereDate = document.createElement("p");
-    premiereDate.textContent = result.premiered ?? "No date provided.";
+    premiereDate.textContent = `Premier Date: ${result.premiered}` ?? "No date provided.";
 
     let status = document.createElement("p");
-    status.textContent = result.status ?? "Unknown";
+    status.textContent = `Show Status: ${result.status}` ?? "Unknown";
 
     let rating = document.createElement("p");
     rating.textContent = `Average rating: ${result.rating.average}` ?? "Unknown.";
 
-    detailsSection.append(h2);
-    detailsSection.append(poster);
-    detailsSection.append(genreList);
-    detailsSection.append(summary);
-    detailsSection.append(premiereDate);
-    detailsSection.append(status);
-    detailsSection.append(rating);
+    let content = document.createElement("div");
+    content.id = "content";
+
+    let text = document.createElement("div");
+    text.id = "text";
+
+    content.append(poster, text);
+    text.append(h2, genreList, summary, premiereDate, status, rating);
+    detailsSection.append(content, text);
 
     message.textContent = "";
 }
